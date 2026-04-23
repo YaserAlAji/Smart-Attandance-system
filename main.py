@@ -226,7 +226,22 @@ def build_full_records() -> list[dict]:
 
 def show_attendance_table() -> None:
     """Displays all students with their attendance status in a formatted table."""
-    records = build_full_records()
+    if attendance_records:
+        records = build_full_records()
+    elif os.path.exists(CSV_FILE):
+        records = []
+        with open(CSV_FILE, "r", newline="", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                records.append({
+                    "id":     row["Student ID"],
+                    "name":   row["Student Name"],
+                    "status": row["Status"],
+                    "time":   row["Time"],
+                    "date":   row["Date"],
+                })
+    else:
+        records = build_full_records()
 
     divider()
     print(f"{Color.BOLD}{Color.CYAN}  ATTENDANCE TABLE — {datetime.now().strftime('%A, %d %B %Y')}{Color.RESET}")
